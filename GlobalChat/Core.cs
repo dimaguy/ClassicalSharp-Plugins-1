@@ -31,8 +31,7 @@ namespace GlobalChatPlugin {
             game.CommandList.Register(new GlobalRegisterChatCommand());
             game.CommandList.Register(new GlobalHelpChatCommand());
 
-            //websocket = new WebSocket("ws://nameless-tor-48663.herokuapp.com/api/notifications/ws");
-            websocket = new WebSocket("ws://localhost:80");
+            websocket = new WebSocket("ws://nameless-tor-48663.herokuapp.com/api/notifications/ws");
             websocket.Opened += new EventHandler(websocket_Opened);
             websocket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(websocket_MessageReceived);
             websocket.Error += new EventHandler<SuperSocket.ClientEngine.ErrorEventArgs>(websocket_Error);
