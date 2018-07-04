@@ -18,11 +18,14 @@ namespace GlobalChatPlugin {
         public static string filePath = "./plugins/globalChat.txt";
         string version = "1.0.0";
 
+        string MyUsername = "";
+
         public void Dispose() {
             websocket.Send("logout");
         }
 		
 		public void Init(Game game) {
+            MyUsername = game.Username;
             game.Server.AppName += " + GlobalChat V"+version;
 
             game.AddScheduledTask(1.0/60, Scheduled);
@@ -77,6 +80,7 @@ namespace GlobalChatPlugin {
                 firstConnection = false;
                 if (info != "")
                 {
+                    if (info.Split('|')[1] != MyUsername) return;
                     websocket.Send("login_" + info);
                 }
             }
@@ -144,6 +148,7 @@ namespace GlobalChatPlugin {
 
         public override void Execute(string[] args)
         {
+            if (args.Length < 2) return;
             string name = game.Username;
             Core.websocket.Send("login_" + args[1] + "|" + name);
             File.WriteAllText(Core.filePath, args[1] + "|" + name);
@@ -164,6 +169,7 @@ namespace GlobalChatPlugin {
 
         public override void Execute(string[] args)
         {
+            if (args.Length < 2) return;
             string name = game.Username;
             Core.websocket.Send("register_" + args[1] + "|" + name);
         }
