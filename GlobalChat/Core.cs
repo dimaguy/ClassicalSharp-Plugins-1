@@ -19,7 +19,7 @@ namespace GlobalChatPlugin {
         string version = "1.0.1";
 
         string MyUsername = "";
-        string LatestVersionUrl = "https://github.com/Sirvoid/ClassicalSharp-Plugins/blob/master/GlobalChat/GlobalChat.dll?raw=true";
+
         public void Dispose() {
             websocket.Send("logout");
         }
@@ -189,6 +189,7 @@ namespace GlobalChatPlugin {
 
         public override void Execute(string[] args)
         {
+	    string LatestVersionUrl = "https://github.com/Sirvoid/ClassicalSharp-Plugins/blob/master/GlobalChat/GlobalChat.dll?raw=true";
             game.Chat.Add("The latest version of the plugin can be downloaded on_" + LatestVersionUrl);
         }
    }
