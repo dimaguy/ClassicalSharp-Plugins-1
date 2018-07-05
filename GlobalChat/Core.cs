@@ -16,7 +16,7 @@ namespace GlobalChatPlugin {
         string lastMessage = "";
         bool firstConnection = true;
         public static string filePath = "./plugins/globalChat.txt";
-        string version = "1.0.0";
+        string version = "1.0.1";
 
         string MyUsername = "";
 
@@ -33,7 +33,8 @@ namespace GlobalChatPlugin {
             game.CommandList.Register(new GlobalLoginChatCommand());
             game.CommandList.Register(new GlobalRegisterChatCommand());
             game.CommandList.Register(new GlobalHelpChatCommand());
-
+            game.CommandList.Register(new GlobalUpdateCommand());
+			
             websocket = new WebSocket("ws://nameless-tor-48663.herokuapp.com/api/notifications/ws");
             websocket.Opened += new EventHandler(websocket_Opened);
             websocket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(websocket_MessageReceived);
@@ -76,7 +77,7 @@ namespace GlobalChatPlugin {
             if (firstConnection)
             {
                 websocket.Send("version_" + version);
-                lastMessage = "/client ghelp <- Global Chat Helping.";
+                lastMessage = "/client ghelp <- Global Chat Help.";
                 firstConnection = false;
                 if (info != "")
                 {
@@ -174,7 +175,24 @@ namespace GlobalChatPlugin {
             Core.websocket.Send("register_" + args[1] + "|" + name);
         }
     }
+	public class GlobalUpdateCommand : ClassicalSharp.Commands.Command
+       {
 
+        public GlobalUpdateCommand()
+        {
+            Name = "gupdate";
+            Help = new string[] {
+                "&a/client gupdate",
+                "&e Update Global Chat.",
+            };
+        }
+
+        public override void Execute(string[] args)
+        {
+	    string LatestVersionUrl = "https://github.com/Sirvoid/ClassicalSharp-Plugins/blob/master/GlobalChat/GlobalChat.dll?raw=true";
+            game.Chat.Add("The latest version of the plugin can be downloaded on_" + LatestVersionUrl);
+        }
+   }
     public class GlobalHelpChatCommand : ClassicalSharp.Commands.Command
     {
 
@@ -183,7 +201,7 @@ namespace GlobalChatPlugin {
             Name = "ghelp";
             Help = new string[] {
                 "&a/client ghelp",
-                "&e Global Chat helping.",
+                "&e Global Chat help.",
             };
         }
 
@@ -192,6 +210,7 @@ namespace GlobalChatPlugin {
             game.Chat.Add("/client gLogin <password> <- Login to your account.");
             game.Chat.Add("/client gRegister <password> <- Register your account.");
             game.Chat.Add("/client gb <message> <- Say something in the chat.");
+	    game.Chat.Add("/client gUpdate <-- Tells you where you can download the latest version of the plugin");
         }
     }
 }
