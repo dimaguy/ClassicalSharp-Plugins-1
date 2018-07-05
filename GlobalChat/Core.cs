@@ -175,10 +175,10 @@ namespace GlobalChatPlugin {
             Core.websocket.Send("register_" + args[1] + "|" + name);
         }
     }
-	public class GlobalHelpChatCommand : ClassicalSharp.Commands.Command
+	public class GlobalUpdateCommand : ClassicalSharp.Commands.Command
        {
 
-        public GlobalHelpChatCommand()
+        public GlobalUpdateCommand()
         {
             Name = "gupdate";
             Help = new string[] {
