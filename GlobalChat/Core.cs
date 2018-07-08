@@ -1,14 +1,16 @@
-using System;
+﻿using System;
 using ClassicalSharp;
 using WebSocket4Net;
 using SuperSocket.ClientEngine;
 using System.IO;
 
-namespace GlobalChatPlugin {
+namespace GlobalChatPlugin
+{
 
-	public class Core : Plugin {
-		
-		public string ClientVersion { get { return "0.99.9.96"; } }
+    public class Core : Plugin
+    {
+
+        public string ClientVersion { get { return "0.99.9.96"; } }
 
         public static WebSocket websocket;
 
@@ -20,15 +22,17 @@ namespace GlobalChatPlugin {
         string version = "1.0.2";
         string MyUsername = "";
 
-        public void Dispose() {
+        public void Dispose()
+        {
             websocket.Send("logout");
         }
-		
-		public void Init(Game game) {
-            MyUsername = game.Username;
-            game.Server.AppName += " + GlobalChat V"+version;
 
-            game.AddScheduledTask(1.0/60, Scheduled);
+        public void Init(Game game)
+        {
+            MyUsername = game.Username;
+            game.Server.AppName += " + GlobalChat V" + version;
+
+            game.AddScheduledTask(1.0 / 60, Scheduled);
             game.CommandList.Register(new GlobalChatCommand());
             game.CommandList.Register(new GlobalLoginChatCommand());
             game.CommandList.Register(new GlobalLogoutChatCommand());
@@ -36,45 +40,50 @@ namespace GlobalChatPlugin {
             game.CommandList.Register(new GlobalHelpChatCommand());
             game.CommandList.Register(new GlobalUpdateCommand());
 
-			
+
             websocket = new WebSocket("ws://nameless-tor-48663.herokuapp.com/api/notifications/ws"); //Websocket Server
             websocket.Opened += new EventHandler(websocket_Opened);
             websocket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(websocket_MessageReceived);
             websocket.Error += new EventHandler<SuperSocket.ClientEngine.ErrorEventArgs>(websocket_Error);
             websocket.Closed += new EventHandler(websocket_Closed);
             websocket.Open();
-            
+
             gameChat = game.Chat;
-            
+
         }
 
         void Scheduled(ScheduledTask task)
         {
-            if(lastMessage != "") { 
+            if (lastMessage != "")
+            {
                 gameChat.Add(lastMessage);
                 lastMessage = "";
             }
 
         }
 
-        public void Ready(Game game) {
+        public void Ready(Game game)
+        {
         }
-		
-		public void Reset(Game game) { }
-		
-		public void OnNewMap(Game game) {
+
+        public void Reset(Game game) { }
+
+        public void OnNewMap(Game game)
+        {
         }
-		
-		public void OnNewMapLoaded(Game game) {       
+
+        public void OnNewMapLoaded(Game game)
+        {
         }
 
         public void websocket_Opened(object sender, EventArgs e)
         {
-            
+
 
             string info = "";
-            if (File.Exists(filePath)) { 
-                 info = File.ReadAllText(filePath);
+            if (File.Exists(filePath))
+            {
+                info = File.ReadAllText(filePath);
             }
             if (firstConnection)
             {
@@ -87,13 +96,14 @@ namespace GlobalChatPlugin {
                     websocket.Send("login_" + info);
                 }
             }
-            else {
+            else
+            {
                 if (info != "")
                 {
                     websocket.Send("reconnect_" + info);
                 }
             }
-           
+
         }
 
         public void websocket_Closed(object sender, EventArgs e)
@@ -107,44 +117,47 @@ namespace GlobalChatPlugin {
         }
 
         public void websocket_MessageReceived(object sender, MessageReceivedEventArgs e)
-        {            
+        {
             lastMessage = "&e[GLOBAL]&f " + e.Message;
         }
     }
 
-	public class GlobalChatCommand : ClassicalSharp.Commands.Command //Send Messages
+    public class GlobalChatCommand : ClassicalSharp.Commands.Command //Send Messages
     {
 
-		public GlobalChatCommand()
+        public GlobalChatCommand()
         {
             Name = "gb";
             Help = new string[] {
                 "&a/client gb [message]",
                 "&eSend a global message.",
-            
+
             };
         }
 
         public override void Execute(string[] args)
         {
-        	args[0] = "";
-        	string message = "";
-        	string secmsg = Core.spam;
+            args[0] = "";
+            string message = "";
+            string secmsg = Core.spam;
             string name = game.Username;
-            				
-            for (int i = 0; i < args.Length; i++) {
-            	message += args[i] + " ";}
-            
-            if (message == secmsg){
-            game.Chat.Add("IM SORRY " + name + "... IM AFRAID I CAN'T DO THAT...");
-            game.Chat.Add("ERROR: SPAM");
-            return;}
-            
-            Core.spam = message;
-            Core.websocket.Send( "message_" + message);
 
-        }   
-	}
+            for (int i = 0; i < args.Length; i++)
+            {
+                message += args[i] + " ";
+            }
+
+            if (message == secmsg)
+            {
+                game.Chat.Add("Im sorry " + name + "... I'm afraid I can't do that ...");
+                return;
+            }
+
+            Core.spam = message;
+            Core.websocket.Send("message_" + message);
+
+        }
+    }
 
     public class GlobalLoginChatCommand : ClassicalSharp.Commands.Command //Chat Login
     {
@@ -166,7 +179,7 @@ namespace GlobalChatPlugin {
             File.WriteAllText(Core.filePath, args[1] + "|" + name);
         }
     }
-      public class GlobalLogoutChatCommand : ClassicalSharp.Commands.Command //Chat Logout
+    public class GlobalLogoutChatCommand : ClassicalSharp.Commands.Command //Chat Logout
     {
 
         public GlobalLogoutChatCommand()
@@ -203,8 +216,8 @@ namespace GlobalChatPlugin {
             Core.websocket.Send("register_" + args[1] + "|" + name);
         }
     }
-	public class GlobalUpdateCommand : ClassicalSharp.Commands.Command //Updated Plugin Location
-       {
+    public class GlobalUpdateCommand : ClassicalSharp.Commands.Command //Updated Plugin Location
+    {
 
         public GlobalUpdateCommand()
         {
@@ -217,11 +230,11 @@ namespace GlobalChatPlugin {
 
         public override void Execute(string[] args)
         {
-	    string LatestVersionUrl = "https://github.com/Sirvoid/ClassicalSharp-Plugins/blob/master/GlobalChat/GlobalChat.dll?raw=true";
+            string LatestVersionUrl = "https://github.com/Sirvoid/ClassicalSharp-Plugins/blob/master/GlobalChat/GlobalChat.dll?raw=true";
             game.Chat.Add("The latest version of the plugin can be downloaded on:");
             game.Chat.Add(LatestVersionUrl);
         }
-   }
+    }
     public class GlobalHelpChatCommand : ClassicalSharp.Commands.Command //Plugin commands Help
     {
 
@@ -240,7 +253,7 @@ namespace GlobalChatPlugin {
             game.Chat.Add("/client gLogout <- Logout from GlobalChat.");
             game.Chat.Add("/client gRegister <password> <- Register your account.");
             game.Chat.Add("/client gb <message> <- Say something in the chat.");
-	    game.Chat.Add("/client gUpdate <-- Tells you where you can download the latest version of the plugin");
+            game.Chat.Add("/client gUpdate <-- Tells you where you can download the latest version of the plugin");
         }
     }
 }
