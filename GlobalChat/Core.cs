@@ -149,7 +149,7 @@ namespace GlobalChatPlugin
 
             if (message == secmsg)
             {
-                game.Chat.Add("Im sorry " + name + "... I'm afraid I can't do that ...");
+                game.Chat.Add("I'm sorry " + name + "... I'm afraid I can't do that ...");
                 return;
             }
 
