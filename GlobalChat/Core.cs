@@ -16,7 +16,7 @@ namespace GlobalChatPlugin {
         string lastMessage = "";
         bool firstConnection = true;
         public static string filePath = "./plugins/globalChat.txt";
-        public static string spam = "./plugins/spamfilter.txt";
+        public static string spam = "";
         string version = "1.0.2";
         string MyUsername = "";
 
@@ -129,7 +129,7 @@ namespace GlobalChatPlugin {
         {
         	args[0] = "";
         	string message = "";
-        	string secmsg = File.ReadAllText(Core.spam);
+        	string secmsg = Core.spam;
             string name = game.Username;
             				
             for (int i = 0; i < args.Length; i++) {
@@ -140,7 +140,7 @@ namespace GlobalChatPlugin {
             game.Chat.Add("ERROR: SPAM");
             return;}
             
-            File.WriteAllText(Core.spam, message);
+            Core.spam = message;
             Core.websocket.Send( "message_" + message);
 
         }   
@@ -237,7 +237,7 @@ namespace GlobalChatPlugin {
         public override void Execute(string[] args)
         {
             game.Chat.Add("/client gLogin <password> <- Login to your account.");
-            game.Chat.Add("/client gLogout <- Logout from GlobalChat.")
+            game.Chat.Add("/client gLogout <- Logout from GlobalChat.");
             game.Chat.Add("/client gRegister <password> <- Register your account.");
             game.Chat.Add("/client gb <message> <- Say something in the chat.");
 	    game.Chat.Add("/client gUpdate <-- Tells you where you can download the latest version of the plugin");
