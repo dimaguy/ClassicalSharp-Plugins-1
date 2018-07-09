@@ -21,6 +21,7 @@ namespace GlobalChatPlugin
         public static string spam = "";
         string version = "1.0.2";
         string MyUsername = "";
+        bool crashed = false;
 
         public void Dispose()
         {
@@ -108,12 +109,15 @@ namespace GlobalChatPlugin
 
         public void websocket_Closed(object sender, EventArgs e)
         {
-            websocket.Open();
+            if (!crashed) { 
+                websocket.Open();
+            }
         }
 
         public void websocket_Error(object sender, EventArgs e)
         {
             lastMessage = "&eError: Disconnected from the Global Chat.";
+            crashed = true;
         }
 
         public void websocket_MessageReceived(object sender, MessageReceivedEventArgs e)
