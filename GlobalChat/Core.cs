@@ -19,8 +19,9 @@ namespace GlobalChatPlugin
         List<string> lastMessages = new List<string>();
         bool firstConnection = true;
         public static string filePath = "./plugins/globalChat.txt";
-        string version = "1.0.3";
+        string version = "1.0.4";
         string MyUsername = "";
+        string currentServ = "";
         bool crashed = false;
 
         public void Dispose()
@@ -32,7 +33,7 @@ namespace GlobalChatPlugin
         {
             MyUsername = game.Username;
             game.Server.AppName += " + GlobalChat V" + version;
-
+            
             game.AddScheduledTask(1.0 / 60, Scheduled);
             game.CommandList.Register(new GlobalChatCommand());
             game.CommandList.Register(new GlobalLoginChatCommand());
@@ -47,7 +48,6 @@ namespace GlobalChatPlugin
             websocket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(websocket_MessageReceived);
             websocket.Error += new EventHandler<SuperSocket.ClientEngine.ErrorEventArgs>(websocket_Error);
             websocket.Closed += new EventHandler(websocket_Closed);
-            websocket.Open();
 
             gameChat = game.Chat;
 
@@ -74,6 +74,10 @@ namespace GlobalChatPlugin
 
         public void OnNewMap(Game game)
         {
+            currentServ = game.Server.ServerName;
+            if (firstConnection) { 
+                websocket.Open();
+            }
         }
 
         public void OnNewMapLoaded(Game game)
@@ -82,8 +86,6 @@ namespace GlobalChatPlugin
 
         public void websocket_Opened(object sender, EventArgs e)
         {
-
-
             string info = "";
             if (File.Exists(filePath))
             {
@@ -96,6 +98,7 @@ namespace GlobalChatPlugin
                 firstConnection = false;
                 if (info != "")
                 {
+                    info += "|" + currentServ;
                     if (info.Split('|')[1] != MyUsername) return;
                     websocket.Send("login_" + info);
                 }
@@ -104,6 +107,7 @@ namespace GlobalChatPlugin
             {
                 if (info != "")
                 {
+                    info += "|" + currentServ;
                     websocket.Send("reconnect_" + info);
                 }
             }
