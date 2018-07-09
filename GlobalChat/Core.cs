@@ -3,6 +3,7 @@ using ClassicalSharp;
 using WebSocket4Net;
 using SuperSocket.ClientEngine;
 using System.IO;
+using System.Collections.Generic;
 
 namespace GlobalChatPlugin
 {
@@ -13,13 +14,12 @@ namespace GlobalChatPlugin
         public string ClientVersion { get { return "0.99.9.96"; } }
 
         public static WebSocket websocket;
-
+        
         Chat gameChat;
-        string lastMessage = "";
+        List<string> lastMessages = new List<string>();
         bool firstConnection = true;
         public static string filePath = "./plugins/globalChat.txt";
-        public static string spam = "";
-        string version = "1.0.2";
+        string version = "1.0.3";
         string MyUsername = "";
         bool crashed = false;
 
@@ -52,14 +52,17 @@ namespace GlobalChatPlugin
             gameChat = game.Chat;
 
         }
-
+        
         void Scheduled(ScheduledTask task)
         {
-            if (lastMessage != "")
-            {
-                gameChat.Add(lastMessage);
-                lastMessage = "";
+            try {
+                foreach (string i in lastMessages)
+                {
+                    gameChat.Add(i);
+                    lastMessages.Remove(i);
+                }
             }
+            catch{ }
 
         }
 
@@ -89,7 +92,7 @@ namespace GlobalChatPlugin
             if (firstConnection)
             {
                 websocket.Send("version_" + version);
-                lastMessage = "/client ghelp <- Global Chat Help.";
+                lastMessages.Add("/client ghelp <- Global Chat Help.");
                 firstConnection = false;
                 if (info != "")
                 {
@@ -116,13 +119,13 @@ namespace GlobalChatPlugin
 
         public void websocket_Error(object sender, EventArgs e)
         {
-            lastMessage = "&eError: Disconnected from the Global Chat.";
+            lastMessages.Add("&eError: Disconnected from the Global Chat.");
             crashed = true;
         }
 
         public void websocket_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            lastMessage = "&e[GLOBAL]&f " + e.Message;
+            lastMessages.Add("&e[GLOBAL]&f " + e.Message);
         }
     }
 
@@ -143,7 +146,6 @@ namespace GlobalChatPlugin
         {
             args[0] = "";
             string message = "";
-            string secmsg = Core.spam;
             string name = game.Username;
 
             for (int i = 0; i < args.Length; i++)
@@ -151,13 +153,6 @@ namespace GlobalChatPlugin
                 message += args[i] + " ";
             }
 
-            if (message == secmsg)
-            {
-                game.Chat.Add("I'm sorry " + name + "... I'm afraid I can't do that ...");
-                return;
-            }
-
-            Core.spam = message;
             Core.websocket.Send("message_" + message);
 
         }
