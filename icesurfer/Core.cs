@@ -4,12 +4,9 @@ using OpenTK;
 using OpenTK.Input;
 using ClassicalSharp.Entities;
 using ClassicalSharp.Events;
-using System;
 using ClassicalSharp.Gui;
 using ClassicalSharp.Gui.Screens;
-using ClassicalSharp.Entities;
 using System.IO.Compression;
-using OpenTK;
 
     namespace IceSurferPlugin
     {
