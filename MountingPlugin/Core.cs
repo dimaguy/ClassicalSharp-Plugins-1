@@ -22,8 +22,7 @@ namespace MountingPlugin {
 		public void Init(Game game) {
             Ggame = game;
             game.CommandList.Register(new MountCommand());
-            game.AddScheduledTask(1.0/60, Scheduled);
-            game.Mouse.ButtonUp += MouseUp;       
+            game.AddScheduledTask(1.0/60, Scheduled);       
         }
        
         public static int mountingId = -1;
